@@ -1,0 +1,32 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Deploy
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: 'Cleanup Workspace'
+      run: |
+        ls -la ./
+        rm -rf ./* || true
+        rm -rf ./.??* || true
+        ls -la ./
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Build
+      run: dotnet publish -f net8.0 -c release -r linux-x64 --self-contained
+    - name: Stop Bots
+      run: |
+          sudo systemctl stop VRCX-API.service
+    - name: Move Files
+      run: |
+          cp -R ./VRCX-API/bin/Release/net8.0/linux-x64/publish/* /_DATA/dubya/VRCX/Api/
