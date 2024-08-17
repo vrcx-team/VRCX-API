@@ -42,7 +42,7 @@ namespace VRCX_API.Controllers
             return _githubCacheService.NightlyReleases.Skip((page - 1) * pageSize).Take(pageSize);
         }
 
-        [Route("nighlty/latest")]
+        [Route("nightly/latest")]
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         public GitHub.Models.Release? GetLatestNightlyRelease()
