@@ -18,6 +18,8 @@
         {
             await _githubCacheService.RefreshAsync();
             _lastRefresh = DateTime.Now;
+            await _cloudflareService.PurgeCache();
+            TriggerGC();
 
             using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(60));
             while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
@@ -33,6 +35,8 @@
                         {
                             await _cloudflareService.PurgeCache();
                         }
+
+                        TriggerGC();
                     }
                 }
                 catch (Exception ex)
@@ -40,6 +44,12 @@
                     _logger.LogError(ex, "Failed to refresh github cache");
                 }
             }
+        }
+
+        private static void TriggerGC()
+        {
+            GC.Collect(2, GCCollectionMode.Aggressive);
+            GC.WaitForFullGCComplete();
         }
     }
 }

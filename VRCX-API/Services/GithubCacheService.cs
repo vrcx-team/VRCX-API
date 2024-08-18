@@ -44,18 +44,19 @@ namespace VRCX_API.Services
 
         public async Task<bool> RefreshAsync()
         {
-            await RefreshReleases();
-            await RefreshAdvisories();
+            bool hasChanged = false;
 
-            GC.Collect(2, GCCollectionMode.Aggressive);
-            GC.WaitForFullGCComplete();
+            hasChanged |= await RefreshReleases();
+            hasChanged |= await RefreshAdvisories();
 
             // @TODO Impliment a way to see if latest releases changed.
-            return true;
+            return hasChanged;
         }
 
-        private async Task RefreshReleases()
+        private async Task<bool> RefreshReleases()
         {
+            bool hasChanged = false;
+
             List<GitHub.Models.Release> stableReleases = [];
             List<GitHub.Models.Release> nighltyReleases = [];
 
@@ -77,6 +78,8 @@ namespace VRCX_API.Services
                 stableReleases[i].Prerelease = false;
             }
 
+            hasChanged |= !AreEqual(stableReleases.FirstOrDefault(), _stableReleases.FirstOrDefault());
+
             _stableReleases = stableReleases;
             _logger.LogInformation("Stabe Releases: {count}; Latest: {latestName}", _stableReleases.Count, _stableReleases.FirstOrDefault()?.Name);
 
@@ -86,16 +89,26 @@ namespace VRCX_API.Services
                 nighltyReleases[i].Prerelease = false;
             }
 
+            hasChanged |= !AreEqual(nighltyReleases.FirstOrDefault(), _nighltyReleases.FirstOrDefault());
+
             _nighltyReleases = nighltyReleases;
             _logger.LogInformation("Nightly Releases: {count}; Latest: {latestName}", _nighltyReleases.Count, _nighltyReleases.FirstOrDefault()?.Name);
+
+            return hasChanged;
         }
 
-        private async Task RefreshAdvisories()
+        private async Task<bool> RefreshAdvisories()
         {
+            bool hasChanged = false;
+
             var advisories = await GetAllAsync<GitHub.Models.RepositoryAdvisory>($"https://api.github.com/repos/{MainRepo.Owner}/{MainRepo.Repo}/security-advisories");
+
+            hasChanged |= !AreEqual(advisories.FirstOrDefault(), _advisories.FirstOrDefault());
 
             _advisories = advisories;
             _logger.LogInformation("Advisories: {count}; Latest: {latestName}", _advisories.Count, _advisories.FirstOrDefault()?.CveId);
+
+            return hasChanged;
         }
 
         private async Task<List<T>> GetAllAsync<T>(string path)
@@ -133,6 +146,86 @@ namespace VRCX_API.Services
             }
 
             return result;
+        }
+
+        private static bool AreEqual(GitHub.Models.Release? a, GitHub.Models.Release? b)
+        {
+            if (a == null && b == null)
+            {
+                return false;
+            }
+
+            if (a == null || b == null)
+            {
+                return false;
+            }
+
+            if (a.Id != b.Id &&
+                   a.Name != b.Name &&
+                   a.Body != b.Body &&
+                   a.PublishedAt != b.PublishedAt &&
+                   a.TagName != b.TagName &&
+                   a.Assets?.Count != b.Assets?.Count)
+            {
+                return false;
+            }
+
+            if (a.Assets?.Count > 0 && b.Assets?.Count > 0)
+            {
+                for (int i = 0; i < a.Assets.Count; i++)
+                {
+                    if (a.Assets[i].Id != b.Assets[i].Id &&
+                       a.Assets[i].Name != b.Assets[i].Name &&
+                       a.Assets[i].UpdatedAt != b.Assets[i].UpdatedAt &&
+                       a.Assets[i].State != b.Assets[i].State &&
+                       a.Assets[i].BrowserDownloadUrl != b.Assets[i].BrowserDownloadUrl)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private static bool AreEqual(GitHub.Models.RepositoryAdvisory? a, GitHub.Models.RepositoryAdvisory? b)
+        {
+            if (a == null && b == null)
+            {
+                return false;
+            }
+
+            if (a == null || b == null)
+            {
+                return false;
+            }
+
+            if (a.CveId != b.CveId &&
+                   a.PublishedAt != b.PublishedAt &&
+                   a.Severity != b.Severity &&
+                   a.Summary != b.Summary &&
+                   a.Description != b.Description &&
+                   a.UpdatedAt != b.UpdatedAt &&
+                   a.State != b.State &&
+                   a.Vulnerabilities?.Count != b.Vulnerabilities?.Count)
+            {
+                return false;
+            }
+
+            if (a.Vulnerabilities?.Count > 0 && b.Vulnerabilities?.Count > 0)
+            {
+                for (int i = 0; i < a.Vulnerabilities.Count; i++)
+                {
+                    if (a.Vulnerabilities[i].PatchedVersions != b.Vulnerabilities[i].PatchedVersions &&
+                       a.Vulnerabilities[i].Package != b.Vulnerabilities[i].Package &&
+                       a.Vulnerabilities[i].VulnerableVersionRange != b.Vulnerabilities[i].VulnerableVersionRange)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
