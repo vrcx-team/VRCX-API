@@ -25,6 +25,7 @@
                     if (DateTime.Now - _lastRefresh > TimeSpan.FromSeconds(120))
                     {
                         await _githubCacheService.RefreshAsync();
+                        _lastRefresh = DateTime.Now;
                     }
                 }
                 catch (Exception ex)
