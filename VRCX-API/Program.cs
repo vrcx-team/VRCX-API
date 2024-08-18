@@ -22,9 +22,11 @@ namespace VRCX_API
 
             CommonConfig.Config.Load();
 
+            builder.Services.AddSingleton<CloudflareService>();
             builder.Services.AddSingleton<GithubCacheService>();
-            builder.Services.AddSingleton<GithubPeriodicService>();
-            builder.Services.AddHostedService(provider => provider.GetRequiredService<GithubPeriodicService>());
+            builder.Services.AddSingleton<CachePeriodicService>();
+            builder.Services.AddHostedService(provider => provider.GetRequiredService<CloudflareService>());
+            builder.Services.AddHostedService(provider => provider.GetRequiredService<CachePeriodicService>());
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>

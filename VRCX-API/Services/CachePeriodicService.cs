@@ -1,15 +1,17 @@
 ﻿namespace VRCX_API.Services
 {
-    public class GithubPeriodicService : BackgroundService
+    public class CachePeriodicService : BackgroundService
     {
-        private readonly ILogger<GithubPeriodicService> _logger;
+        private readonly ILogger<CachePeriodicService> _logger;
         private readonly GithubCacheService _githubCacheService;
+        private readonly CloudflareService _cloudflareService;
         private DateTime _lastRefresh = DateTime.MinValue;
 
-        public GithubPeriodicService(ILogger<GithubPeriodicService> logger, GithubCacheService githubCacheService)
+        public CachePeriodicService(ILogger<CachePeriodicService> logger, GithubCacheService githubCacheService, CloudflareService cloudflareService)
         {
             _logger = logger;
             _githubCacheService = githubCacheService;
+            _cloudflareService = cloudflareService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,8 +26,13 @@
                 {
                     if (DateTime.Now - _lastRefresh > TimeSpan.FromSeconds(120))
                     {
-                        await _githubCacheService.RefreshAsync();
+                        var hasChanged = await _githubCacheService.RefreshAsync();
                         _lastRefresh = DateTime.Now;
+
+                        if(hasChanged)
+                        {
+                            await _cloudflareService.PurgeCache();
+                        }
                     }
                 }
                 catch (Exception ex)

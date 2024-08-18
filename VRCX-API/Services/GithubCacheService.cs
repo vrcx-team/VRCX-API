@@ -42,13 +42,16 @@ namespace VRCX_API.Services
             _jsonSerializerOptions.Converters.Add(new IgnoreEmptyStringNullableEnumConverter());
         }
 
-        public async Task RefreshAsync()
+        public async Task<bool> RefreshAsync()
         {
             await RefreshReleases();
             await RefreshAdvisories();
 
             GC.Collect(2, GCCollectionMode.Aggressive);
             GC.WaitForFullGCComplete();
+
+            // @TODO Impliment a way to see if latest releases changed.
+            return true;
         }
 
         private async Task RefreshReleases()
