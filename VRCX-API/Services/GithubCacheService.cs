@@ -74,9 +74,6 @@ namespace VRCX_API.Services
                 stableReleases[i].Prerelease = false;
             }
 
-            //_stableReleases.Clear();
-            //_stableReleases.AddRange(stableReleases);
-            //stableReleases.Clear();
             _stableReleases = stableReleases;
             _logger.LogInformation("Stabe Releases: {count}; Latest: {latestName}", _stableReleases.Count, _stableReleases.FirstOrDefault()?.Name);
 
@@ -86,9 +83,6 @@ namespace VRCX_API.Services
                 nighltyReleases[i].Prerelease = false;
             }
 
-            //_nighltyReleases.Clear();
-            //_nighltyReleases.AddRange(nighltyReleases);
-            //nighltyReleases.Clear();
             _nighltyReleases = nighltyReleases;
             _logger.LogInformation("Nightly Releases: {count}; Latest: {latestName}", _nighltyReleases.Count, _nighltyReleases.FirstOrDefault()?.Name);
         }
@@ -96,9 +90,7 @@ namespace VRCX_API.Services
         private async Task RefreshAdvisories()
         {
             var advisories = await GetAllAsync<GitHub.Models.RepositoryAdvisory>($"https://api.github.com/repos/{MainRepo.Owner}/{MainRepo.Repo}/security-advisories");
-            //_advisories.Clear();
-            //_advisories.AddRange(advisories);
-            //advisories.Clear();
+
             _advisories = advisories;
             _logger.LogInformation("Advisories: {count}; Latest: {latestName}", _advisories.Count, _advisories.FirstOrDefault()?.CveId);
         }
