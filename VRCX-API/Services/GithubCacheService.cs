@@ -160,11 +160,11 @@ namespace VRCX_API.Services
                 return false;
             }
 
-            if (a.Id != b.Id &&
-                   a.Name != b.Name &&
-                   a.Body != b.Body &&
-                   a.PublishedAt != b.PublishedAt &&
-                   a.TagName != b.TagName &&
+            if (a.Id != b.Id ||
+                   a.Name != b.Name ||
+                   a.Body != b.Body ||
+                   a.PublishedAt != b.PublishedAt ||
+                   a.TagName != b.TagName ||
                    a.Assets?.Count != b.Assets?.Count)
             {
                 return false;
@@ -174,10 +174,10 @@ namespace VRCX_API.Services
             {
                 for (int i = 0; i < a.Assets.Count; i++)
                 {
-                    if (a.Assets[i].Id != b.Assets[i].Id &&
-                       a.Assets[i].Name != b.Assets[i].Name &&
-                       a.Assets[i].UpdatedAt != b.Assets[i].UpdatedAt &&
-                       a.Assets[i].State != b.Assets[i].State &&
+                    if (a.Assets[i].Id != b.Assets[i].Id ||
+                       a.Assets[i].Name != b.Assets[i].Name ||
+                       a.Assets[i].UpdatedAt != b.Assets[i].UpdatedAt ||
+                       a.Assets[i].State != b.Assets[i].State ||
                        a.Assets[i].BrowserDownloadUrl != b.Assets[i].BrowserDownloadUrl)
                     {
                         return false;
@@ -200,13 +200,13 @@ namespace VRCX_API.Services
                 return false;
             }
 
-            if (a.CveId != b.CveId &&
-                   a.PublishedAt != b.PublishedAt &&
-                   a.Severity != b.Severity &&
-                   a.Summary != b.Summary &&
-                   a.Description != b.Description &&
-                   a.UpdatedAt != b.UpdatedAt &&
-                   a.State != b.State &&
+            if (a.CveId != b.CveId ||
+                   a.PublishedAt != b.PublishedAt ||
+                   a.Severity != b.Severity ||
+                   a.Summary != b.Summary ||
+                   a.Description != b.Description ||
+                   a.UpdatedAt != b.UpdatedAt ||
+                   a.State != b.State ||
                    a.Vulnerabilities?.Count != b.Vulnerabilities?.Count)
             {
                 return false;
@@ -216,8 +216,8 @@ namespace VRCX_API.Services
             {
                 for (int i = 0; i < a.Vulnerabilities.Count; i++)
                 {
-                    if (a.Vulnerabilities[i].PatchedVersions != b.Vulnerabilities[i].PatchedVersions &&
-                       a.Vulnerabilities[i].Package != b.Vulnerabilities[i].Package &&
+                    if (a.Vulnerabilities[i].PatchedVersions != b.Vulnerabilities[i].PatchedVersions ||
+                       a.Vulnerabilities[i].Package?.Name != b.Vulnerabilities[i].Package?.Name ||
                        a.Vulnerabilities[i].VulnerableVersionRange != b.Vulnerabilities[i].VulnerableVersionRange)
                     {
                         return false;
