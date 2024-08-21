@@ -31,7 +31,7 @@
                         var hasChanged = await _githubCacheService.RefreshAsync();
                         _lastRefresh = DateTime.Now;
 
-                        if(hasChanged)
+                        if (hasChanged)
                         {
                             await _cloudflareService.PurgeCache();
                         }
