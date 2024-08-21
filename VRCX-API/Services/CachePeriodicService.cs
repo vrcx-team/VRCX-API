@@ -2,6 +2,9 @@
 {
     public class CachePeriodicService : BackgroundService
     {
+        private const int PeriodicTimerInterval = 60;
+        private const int RefreshInterval = 120;
+
         private readonly ILogger<CachePeriodicService> _logger;
         private readonly GithubCacheService _githubCacheService;
         private readonly CloudflareService _cloudflareService;
@@ -21,12 +24,12 @@
             await _cloudflareService.PurgeCache();
             TriggerGC();
 
-            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(60));
+            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(PeriodicTimerInterval));
             while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
             {
                 try
                 {
-                    if (DateTime.Now - _lastRefresh > TimeSpan.FromSeconds(120))
+                    if (DateTime.Now - _lastRefresh > TimeSpan.FromSeconds(RefreshInterval))
                     {
                         var hasChanged = await _githubCacheService.RefreshAsync();
                         _lastRefresh = DateTime.Now;
