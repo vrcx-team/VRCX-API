@@ -34,6 +34,7 @@ namespace VRCX_API
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
                     options.JsonSerializerOptions.Converters.Add(new IgnoreEmptyStringNullableEnumConverter());
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 });
 #if DEBUG
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
