@@ -1,8 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using GitHub;
-using GitHub.Octokit.Client;
-using GitHub.Octokit.Client.Authentication;
 using VRCX_API.Configs;
 using VRCX_API.Helpers;
 
@@ -49,7 +46,6 @@ namespace VRCX_API.Services
             hasChanged |= await RefreshReleases();
             hasChanged |= await RefreshAdvisories();
 
-            // @TODO Impliment a way to see if latest releases changed.
             return hasChanged;
         }
 
