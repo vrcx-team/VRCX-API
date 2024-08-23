@@ -42,7 +42,6 @@ namespace VRCX_API.Controllers
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status302Found)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public ActionResult GetLastestStableReleaseGithub()
         {
