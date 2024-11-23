@@ -23,10 +23,10 @@ jobs:
       with:
         submodules: 'recursive'
     - name: Build
-      run: dotnet publish -f net8.0 -c release -r linux-x64 --self-contained
+      run: dotnet publish -f net9.0 -c release -r linux-x64 --self-contained
     - name: Stop Bots
       run: |
           sudo systemctl stop VRCX-API.service
     - name: Move Files
       run: |
-          cp -R ./VRCX-API/bin/Release/net8.0/linux-x64/publish/* /_DATA/dubya/VRCX/Api/
+          cp -R ./VRCX-API/bin/Release/net9.0/linux-x64/publish/* /_DATA/dubya/VRCX/Api/
