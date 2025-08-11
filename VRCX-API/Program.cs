@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 using Serilog;
 using VRCX_API.Configs;
 using VRCX_API.Helpers;
@@ -42,6 +43,7 @@ namespace VRCX_API
             builder.Services.AddSwaggerGen(c =>
             {
                 c.DocumentFilter<PathLowercaseDocumentFilter>();
+                c.CustomSchemaIds(type => type.FullName);
             });
 #endif
 

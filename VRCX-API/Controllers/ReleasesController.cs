@@ -24,7 +24,7 @@ namespace VRCX_API.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IEnumerable<Release> GetStableReleases([Range(1, 101)] int page = 1, [Range(1, 101)] int pageSize = 30)
+        public IEnumerable<Models.Release> GetStableReleases([Range(1, 101)] int page = 1, [Range(1, 101)] int pageSize = 30)
         {
             return _githubCacheService.StableReleases.Skip((page - 1) * pageSize).Take(pageSize);
         }
@@ -33,7 +33,7 @@ namespace VRCX_API.Controllers
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public Release? GetLastestStableRelease()
+        public Models.Release? GetLastestStableRelease()
         {
             return _githubCacheService.StableReleases.FirstOrDefault();
         }
@@ -80,7 +80,7 @@ namespace VRCX_API.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IEnumerable<Release> GetNightlyReleases([Range(1, 101)] int page = 1, [Range(1, 101)] int pageSize = 30)
+        public IEnumerable<Models.Release> GetNightlyReleases([Range(1, 101)] int page = 1, [Range(1, 101)] int pageSize = 30)
         {
             return _githubCacheService.NightlyReleases.Skip((page - 1) * pageSize).Take(pageSize);
         }
@@ -89,7 +89,7 @@ namespace VRCX_API.Controllers
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public Release? GetLatestNightlyRelease()
+        public Models.Release? GetLatestNightlyRelease()
         {
             return _githubCacheService.NightlyReleases.FirstOrDefault();
         }
