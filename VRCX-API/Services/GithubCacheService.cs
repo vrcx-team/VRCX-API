@@ -1,14 +1,24 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using VRCX_API.Configs;
 using VRCX_API.Helpers;
 
 namespace VRCX_API.Services
 {
+    public class ReleaseAsset : GitHub.Models.ReleaseAsset
+    {
+        public string? Digest { get; set; }
+    }
+    
+    public class Release : GitHub.Models.Release
+    {
+        public List<ReleaseAsset>? Assets { get; set; }
+    }
+    
     public class GithubCacheService
     {
-        public IReadOnlyCollection<GitHub.Models.Release> StableReleases => _stableReleases;
-        public IReadOnlyCollection<GitHub.Models.Release> NightlyReleases => _nighltyReleases;
+        public IReadOnlyCollection<Release> StableReleases => _stableReleases;
+        public IReadOnlyCollection<Release> NightlyReleases => _nighltyReleases;
         public IReadOnlyCollection<GitHub.Models.RepositoryAdvisory> Advisories => _advisories;
 
         private readonly ILogger<GithubCacheService> _logger;
@@ -16,8 +26,8 @@ namespace VRCX_API.Services
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        private List<GitHub.Models.Release> _stableReleases = new();
-        private List<GitHub.Models.Release> _nighltyReleases = new();
+        private List<Release> _stableReleases = new();
+        private List<Release> _nighltyReleases = new();
         private List<GitHub.Models.RepositoryAdvisory> _advisories = new();
 
         private static (string Owner, string Repo) MainRepo = ("vrcx-team", "VRCX");
@@ -49,21 +59,21 @@ namespace VRCX_API.Services
             return hasChanged;
         }
 
-        private async Task<bool> RefreshReleases()
+        public async Task<bool> RefreshReleases()
         {
             bool hasChanged = false;
 
-            List<GitHub.Models.Release> stableReleases = [];
-            List<GitHub.Models.Release> nighltyReleases = [];
+            List<Release> stableReleases = [];
+            List<Release> nighltyReleases = [];
 
             {
-                var allReleases = await GetAllAsync<GitHub.Models.Release>($"https://api.github.com/repos/{MainRepo.Owner}/{MainRepo.Repo}/releases?per_page=100");
+                var allReleases = await GetAllAsync<Release>($"https://api.github.com/repos/{MainRepo.Owner}/{MainRepo.Repo}/releases?per_page=100");
                 stableReleases.AddRange(allReleases.Where(x => x.Prerelease == false));
                 nighltyReleases.AddRange(allReleases.Where(x => x.Prerelease != false));
                 allReleases.Clear();
             }
             {
-                var allReleases = await GetAllAsync<GitHub.Models.Release>($"https://api.github.com/repos/{OldRepo.Owner}/{OldRepo.Repo}/releases?per_page=100");
+                var allReleases = await GetAllAsync<Release>($"https://api.github.com/repos/{OldRepo.Owner}/{OldRepo.Repo}/releases?per_page=100");
                 nighltyReleases.AddRange(allReleases);
                 allReleases.Clear();
             }
@@ -144,7 +154,7 @@ namespace VRCX_API.Services
             return result;
         }
 
-        private static bool AreEqual(GitHub.Models.Release? a, GitHub.Models.Release? b)
+        private static bool AreEqual(Release? a, Release? b)
         {
             if (a == null && b == null)
             {
