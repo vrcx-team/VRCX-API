@@ -18,4 +18,4 @@ jobs:
     steps:
     - name: Restart
       run: |
-          sudo systemctl restart VRCX-API.service
+          sudo systemctl restart apps_vrcx_VrcxApi.service
