@@ -13,7 +13,7 @@ namespace VRCX_API.Controllers
     public class ErrorReportingController : ControllerBase
     {
         private readonly ILogger<ErrorReportingController> _logger;
-        private string SentryDsnBase64 => Convert.ToBase64String(Encoding.UTF8.GetBytes(CommonConfig.Config.Instance.SentryDsn));
+        private string SentryDsnBase64 => Convert.ToBase64String(Encoding.UTF8.GetBytes(VrcxConfig.Config.Instance.SentryDsn));
 
         public ErrorReportingController(ILogger<ErrorReportingController> logger)
         {
@@ -23,15 +23,17 @@ namespace VRCX_API.Controllers
         [HttpGet]
         [Route("getDsn")]
         [Produces(MediaTypeNames.Text.Plain)]
-        public string GetDsn()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public string? GetDsn()
         {
-            var referer = Request.Headers.Referer.ToString();
-            var userAgent = Request.Headers.UserAgent.ToString();
-            if (referer != "https://vrcx.app" && !userAgent.Contains("VRCX"))
+            var headers = Request.Headers;
+            if(!headers.Referer.Any(x => x == "https://vrcx.app") && !headers.UserAgent.Any(x => x?.Contains("VRCX") == true))
             {
                 Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                return string.Empty;
+                return null;
             }
+
             return SentryDsnBase64;
         }
     }

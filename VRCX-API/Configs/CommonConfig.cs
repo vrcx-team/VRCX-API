@@ -10,6 +10,5 @@
         public string MongoDBAddress { get; set; } = string.Empty;
         public string CloudflareAPIKey { get; set; } = string.Empty;
         public string GithubAPIKey { get; set; } = string.Empty;
-        public string SentryDsn { get; set; } = string.Empty;
     }
 }
