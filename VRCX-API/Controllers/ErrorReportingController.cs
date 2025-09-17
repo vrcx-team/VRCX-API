@@ -1,10 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using VRCX_API.Configs;
-using VRCX_API.Services;
 
 namespace VRCX_API.Controllers
 {
@@ -28,7 +26,7 @@ namespace VRCX_API.Controllers
         public string? GetDsn()
         {
             var headers = Request.Headers;
-            if(!headers.Referer.Any(x => x == "https://vrcx.app") || !headers.UserAgent.Any(x => x?.Contains("VRCX") == true))
+            if (!headers.Referer.Any(x => x == "https://vrcx.app") || !headers.UserAgent.Any(x => x?.Contains("VRCX") == true))
             {
                 Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 return null;

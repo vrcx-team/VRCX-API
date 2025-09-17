@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Options;
 using Serilog;
 using VRCX_API.Configs;
 using VRCX_API.Helpers;
