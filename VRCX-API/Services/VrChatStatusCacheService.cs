@@ -1,5 +1,4 @@
 using System.Collections.Frozen;
-using System.Text.Json;
 using VRCX_API.Configs;
 
 namespace VRCX_API.Services
@@ -120,7 +119,6 @@ namespace VRCX_API.Services
                     _logger.LogError(ex, "Error fetching status: {Path}", path);
                 }
             }
-
 
             return hasChanged;
         }
