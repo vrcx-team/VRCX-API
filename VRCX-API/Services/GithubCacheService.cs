@@ -31,7 +31,7 @@ namespace VRCX_API.Services
             // add authorization header
             _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", CommonConfig.Config.Instance.GithubAPIKey);
             _httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github.v3+json");
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("VRCX-API");
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(VrcxConfig.Config.Instance.UserAgent);
 
             _jsonSerializerOptions = new(JsonSerializerDefaults.Web);
             _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
