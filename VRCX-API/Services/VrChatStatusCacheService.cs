@@ -22,16 +22,16 @@ namespace VRCX_API.Services
             "extauth_oculus.json"
         );
 
-        private const string VrChatStatusBaseUrl = "https://status.vrchat.com/api/v2/";
+        private const string VrChatStatusBaseUrl = "https://status.vrchat.com/";
         public static readonly FrozenSet<string> VrChatStatusPaths = FrozenSet.Create(
-            "summary.json",
-            "status.json",
-            "components.json",
-            "incidents.json",
-            "incidents/unresolved.json",
-            "scheduled-maintenances.json",
-            "scheduled-maintenances/active.json",
-            "scheduled-maintenances/upcoming.json"
+            "api/v2/summary.json",
+            "api/v2/status.json",
+            "api/v2/components.json",
+            "api/v2/incidents.json",
+            "api/v2/incidents/unresolved.json",
+            "api/v2/scheduled-maintenances.json",
+            "api/v2/scheduled-maintenances/active.json",
+            "api/v2/scheduled-maintenances/upcoming.json"
         );
 
         private Dictionary<string, string> _graphs = GraphPaths.ToDictionary(g => g, g => string.Empty);

@@ -18,7 +18,7 @@ namespace VRCX_API.Controllers
             _vrChatStatusCacheService = vrChatStatusCacheService;
         }
 
-        [Route("statuses/{*statusPath}")]
+        [Route("statuspage/{*statusPath}")]
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -32,7 +32,7 @@ namespace VRCX_API.Controllers
             return NotFound();
         }
 
-        [Route("statuses")]
+        [Route("statuspage")]
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
