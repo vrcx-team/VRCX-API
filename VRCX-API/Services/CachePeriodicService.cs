@@ -64,10 +64,12 @@
                         await _cloudflareService.PurgeCache();
                     }
 
+                    /* API is no longer running a low-memory environment. So we don't need to trigger GC anymore.
                     if (hasSomethingRefreshed)
                     {
                         TriggerGC();
                     }
+                    */
                 }
                 catch (Exception ex)
                 {
