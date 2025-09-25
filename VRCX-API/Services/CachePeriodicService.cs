@@ -2,25 +2,34 @@
 {
     public class CachePeriodicService : BackgroundService
     {
-        private const int PeriodicTimerInterval = 60;
-        private const int RefreshInterval = 120;
+        private const int PeriodicTimerInterval = 20;
+        private const int GithubRefreshInterval = 120;
+        private const int VrChatStatusRefreshInterval = 30;
 
         private readonly ILogger<CachePeriodicService> _logger;
-        private readonly GithubCacheService _githubCacheService;
         private readonly CloudflareService _cloudflareService;
-        private DateTime _lastRefresh = DateTime.MinValue;
+        private readonly GithubCacheService _githubCacheService;
+        private readonly VrChatStatusCacheService _vrChatStatusCacheService;
 
-        public CachePeriodicService(ILogger<CachePeriodicService> logger, GithubCacheService githubCacheService, CloudflareService cloudflareService)
+        private DateTime _githubLastRefresh = DateTime.MinValue;
+        private DateTime _vrChatStatusLastRefresh = DateTime.MinValue;
+
+        public CachePeriodicService(ILogger<CachePeriodicService> logger, CloudflareService cloudflareService, GithubCacheService githubCacheService, VrChatStatusCacheService vrChatStatusCacheService)
         {
             _logger = logger;
-            _githubCacheService = githubCacheService;
             _cloudflareService = cloudflareService;
+            _githubCacheService = githubCacheService;
+            _vrChatStatusCacheService = vrChatStatusCacheService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await _githubCacheService.RefreshAsync();
-            _lastRefresh = DateTime.Now;
+            _githubLastRefresh = DateTime.Now;
+
+            await _vrChatStatusCacheService.RefreshAsync();
+            _vrChatStatusLastRefresh = DateTime.Now;
+
             await _cloudflareService.PurgeCache();
             TriggerGC();
 
@@ -29,16 +38,34 @@
             {
                 try
                 {
-                    if (DateTime.Now - _lastRefresh > TimeSpan.FromSeconds(RefreshInterval))
+                    var hasSomethingRefreshed = false;
+                    var hasSomethingChanged = false;
+
+                    if (DateTime.Now - _githubLastRefresh > TimeSpan.FromSeconds(GithubRefreshInterval))
                     {
-                        var hasChanged = await _githubCacheService.RefreshAsync();
-                        _lastRefresh = DateTime.Now;
+                        hasSomethingRefreshed |= true;
+                        hasSomethingChanged |= await _githubCacheService.RefreshAsync();
+                        _githubLastRefresh = DateTime.Now;
+                    }
 
-                        if (hasChanged)
-                        {
-                            await _cloudflareService.PurgeCache();
-                        }
+                    if (DateTime.Now - _vrChatStatusLastRefresh > TimeSpan.FromSeconds(VrChatStatusRefreshInterval))
+                    {
+                        hasSomethingRefreshed |= true;
 
+                        // We will not be caching the status.
+                        // hasSomethingChanged |= await _vrChatStatusCacheService.RefreshAsync();
+                        await _vrChatStatusCacheService.RefreshAsync();
+
+                        _vrChatStatusLastRefresh = DateTime.Now;
+                    }
+
+                    if (hasSomethingChanged)
+                    {
+                        await _cloudflareService.PurgeCache();
+                    }
+
+                    if (hasSomethingRefreshed)
+                    {
                         TriggerGC();
                     }
                 }
