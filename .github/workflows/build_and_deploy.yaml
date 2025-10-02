@@ -31,3 +31,9 @@ jobs:
       run: |
           cp -R ./VRCX-API/bin/Release/net9.0/linux-x64/publish/* /_DATA/apps/vrcx/VrcxApi/
           cp /_DATA/_MainFolderPath.txt /_DATA/apps/vrcx/VrcxApi/_MainFolderPath.txt
+    - name: 'Cleanup Workspace'
+      run: |
+        ls -la ./
+        rm -rf ./* || true
+        rm -rf ./.??* || true
+        ls -la ./
