@@ -24,7 +24,6 @@ namespace VRCX_API
 
             builder.Services.AddSingleton<CloudflareService>();
             builder.Services.AddSingleton<GithubCacheService>();
-            builder.Services.AddSingleton<VrChatStatusCacheService>();
             builder.Services.AddSingleton<CachePeriodicService>();
             builder.Services.AddHostedService(provider => provider.GetRequiredService<CloudflareService>());
             builder.Services.AddHostedService(provider => provider.GetRequiredService<CachePeriodicService>());

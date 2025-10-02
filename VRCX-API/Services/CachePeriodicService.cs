@@ -9,26 +9,20 @@
         private readonly ILogger<CachePeriodicService> _logger;
         private readonly CloudflareService _cloudflareService;
         private readonly GithubCacheService _githubCacheService;
-        private readonly VrChatStatusCacheService _vrChatStatusCacheService;
 
         private DateTime _githubLastRefresh = DateTime.MinValue;
-        private DateTime _vrChatStatusLastRefresh = DateTime.MinValue;
 
-        public CachePeriodicService(ILogger<CachePeriodicService> logger, CloudflareService cloudflareService, GithubCacheService githubCacheService, VrChatStatusCacheService vrChatStatusCacheService)
+        public CachePeriodicService(ILogger<CachePeriodicService> logger, CloudflareService cloudflareService, GithubCacheService githubCacheService)
         {
             _logger = logger;
             _cloudflareService = cloudflareService;
             _githubCacheService = githubCacheService;
-            _vrChatStatusCacheService = vrChatStatusCacheService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await _githubCacheService.RefreshAsync();
             _githubLastRefresh = DateTime.Now;
-
-            await _vrChatStatusCacheService.RefreshAsync();
-            _vrChatStatusLastRefresh = DateTime.Now;
 
             await _cloudflareService.PurgeCache();
             TriggerGC();
@@ -46,17 +40,6 @@
                         hasSomethingRefreshed |= true;
                         hasSomethingChanged |= await _githubCacheService.RefreshAsync();
                         _githubLastRefresh = DateTime.Now;
-                    }
-
-                    if (DateTime.Now - _vrChatStatusLastRefresh > TimeSpan.FromSeconds(VrChatStatusRefreshInterval))
-                    {
-                        hasSomethingRefreshed |= true;
-
-                        // We will not be caching the status.
-                        // hasSomethingChanged |= await _vrChatStatusCacheService.RefreshAsync();
-                        await _vrChatStatusCacheService.RefreshAsync();
-
-                        _vrChatStatusLastRefresh = DateTime.Now;
                     }
 
                     if (hasSomethingChanged)
