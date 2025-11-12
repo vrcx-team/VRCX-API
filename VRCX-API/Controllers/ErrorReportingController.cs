@@ -11,7 +11,7 @@ namespace VRCX_API.Controllers
     public class ErrorReportingController : ControllerBase
     {
         private readonly ILogger<ErrorReportingController> _logger;
-        private string SentryDsnBase64 => Convert.ToBase64String(Encoding.UTF8.GetBytes(VrcxConfig.Config.Instance.SentryDsn));
+        private static string SentryDsnBase64 => Convert.ToBase64String(Encoding.UTF8.GetBytes(VrcxConfig.Config.Instance.SentryDsn));
 
         public ErrorReportingController(ILogger<ErrorReportingController> logger)
         {

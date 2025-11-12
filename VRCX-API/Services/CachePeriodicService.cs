@@ -4,7 +4,6 @@
     {
         private const int PeriodicTimerInterval = 20;
         private const int GithubRefreshInterval = 120;
-        private const int VrChatStatusRefreshInterval = 30;
 
         private readonly ILogger<CachePeriodicService> _logger;
         private readonly CloudflareService _cloudflareService;
@@ -27,7 +26,7 @@
             await _cloudflareService.PurgeCache();
             TriggerGC();
 
-            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(PeriodicTimerInterval));
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(PeriodicTimerInterval));
             while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
             {
                 try

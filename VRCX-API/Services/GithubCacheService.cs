@@ -16,9 +16,9 @@ namespace VRCX_API.Services
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        private List<Models.Release> _stableReleases = new();
-        private List<Models.Release> _nighltyReleases = new();
-        private List<GitHub.Models.RepositoryAdvisory> _advisories = new();
+        private List<Models.Release> _stableReleases = [];
+        private List<Models.Release> _nighltyReleases = [];
+        private List<GitHub.Models.RepositoryAdvisory> _advisories = [];
 
         private static (string Owner, string Repo) MainRepo = ("vrcx-team", "VRCX");
         private static (string Owner, string Repo) OldRepo = ("Natsumi-sama", "VRCX");

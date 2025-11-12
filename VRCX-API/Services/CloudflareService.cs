@@ -21,7 +21,7 @@ namespace VRCX_API.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var zones = await _client.Zones.GetAsync();
+            var zones = await _client.Zones.GetAsync(cancellationToken: cancellationToken);
 
             if (!zones.Success)
             {

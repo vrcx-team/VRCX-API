@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace VRCX_API.Helpers
@@ -19,7 +19,7 @@ namespace VRCX_API.Helpers
 
         private static string ToLowercase(string key)
         {
-            var parts = key.Split('/').Select(part => part.Contains("}") ? part : part.ToLowerInvariant());
+            var parts = key.Split('/').Select(part => part.Contains('}') ? part : part.ToLowerInvariant());
             return string.Join('/', parts);
         }
     }
