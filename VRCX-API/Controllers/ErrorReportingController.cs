@@ -25,12 +25,14 @@ namespace VRCX_API.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public string? GetDsn()
         {
+            /* Disabled because causing issues with caching.
             var headers = Request.Headers;
             if (!headers.Referer.Any(x => x == "https://vrcx.app") || !headers.UserAgent.Any(x => x?.Contains("VRCX") == true))
             {
                 Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 return null;
             }
+            */
 
             return SentryDsnBase64;
         }
